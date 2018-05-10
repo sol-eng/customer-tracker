@@ -22,12 +22,16 @@ Lesser known, but powerful.
 * Parameterizable
 * IDE features
 
+[example](http://colorado.rstudio.com:3939/content/1095/tracker-report.nb.html)
+
 ### Shiny
 
 You can use Shiny
 
 * Reactive
 * Powerful
+
+[example flexdashboard](http://colorado.rstudio.com:3939/content/1094/)
 
 ### RSC
 
