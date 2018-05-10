@@ -2,6 +2,8 @@
 
 ### Problems with Excel Tools
 
+Define what an Excel tool is.
+
 * VBA
 * Distribution
 * Size
@@ -22,7 +24,7 @@ Lesser known, but powerful.
 * Parameterizable
 * IDE features
 
-[example](http://colorado.rstudio.com:3939/content/1095/tracker-report.nb.html)
+[example report](http://colorado.rstudio.com:3939/content/1095/tracker-report.nb.html)
 
 ### Shiny
 
