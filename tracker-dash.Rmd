@@ -27,9 +27,9 @@ library(readr)
 library(tidyverse)
 library(shiny)
 library(plotly)
-curr <- read_csv("trackerCalcCurr.csv")
-pre <- read_csv("trackerCalcPre.csv")
-users <- read_csv("users.csv")
+curr <- read_csv("data/trackerCalcCurr.csv")
+pre <- read_csv("data/trackerCalcPre.csv")
+users <- read_csv("data/users.csv")
 ```
 
 

@@ -26,11 +26,11 @@ This report shows pecentage change by: `r params$seg` (segment); `r params$grp` 
 library(readr)
 library(tidyverse)
 library(plotly)
-curr <- read_csv("trackerCalcCurr.csv")
-pre <- read_csv("trackerCalcPre.csv")
-users <- read_csv("users.csv")
+library(openxlsx)
+curr <- read_csv("data/trackerCalcCurr.csv")
+pre <- read_csv("data/trackerCalcPre.csv")
+users <- read_csv("data/users.csv")
 ```
-
 
 ```{r format, include=FALSE}
 f <- function(x, y) {100 * (y / x - 1)}
@@ -86,15 +86,35 @@ p1 <- ggplot(data = filter(pdat, seg != "dollarsPct"), aes(week, metric, fill = 
 ggplotly(p1)
 ```
 
+
 ```{r data, echo=FALSE}
-dat %>%
-  dat %>%
+out <- dat %>%
   select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
          purUserCurr, itemsPurPre, itemsPurCurr,	dollItemsPre, dollItemsCurr) %>%
   mutate(purUserCurr = 100 * purUserCurr) %>%
   mutate(purUserPre = 100 * purUserPre) %>%
-  mutate_at(vars(purUserPre:dollItemsCurr), round, 2) %>%
-  knitr::kable()
+  mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
+
+knitr::kable(out)
 ```
 
+
+```{r download, include=FALSE}
+reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
+wb <- createWorkbook()
+addWorksheet(wb, "Summary", gridLines = FALSE)
+print(p1)
+insertPlot(wb, "Summary", width = 8)
+writeData(wb, "Summary", out, startRow = 21)
+saveWorkbook(wb, reportName, overwrite = TRUE)
+```
+
+[`Download Report`](`r reportName`)
+
+```{r email, echo=FALSE}
+library(rmarkdown)
+output_metadata$set("rsc_output_files" = list(reportName))
+output_metadata$set("rsc_email_attachments" = list(reportName))
+output_metadata$set("rsc_email_subject" = reportName)
+```
 
