@@ -15,10 +15,12 @@ Solution              | Author  | Render  | Audience       | Snapshot   | Capabi
 
 ## Documents
 
-* [R Markdown Report](http://colorado.rstudio.com:3939/content/1095/tracker-report.nb.html). This R Markdown report is hosted on RStudio Connect. If you log into RStudio Connect you can create custom report versions, email yourself a copy, and download the associated report in Excel. Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.
-* [Shiny application](). This Shiny application is hosted on RStudio Connect. If you log into R Studio Connect you can adjust the runtime settings and inspect the logs. Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.
-* [Flexdashboard](http://colorado.rstudio.com:3939/content/1094/). This Flexdashboard is hosted on RStudio Connect. If you log into R Studio Connect you can adjust the runtime settings and inspect the logs. Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.
+These assets are published to [RStudio Connect](https://www.rstudio.com/products/connect/). Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.
+
+* [R Markdown Report](http://colorado.rstudio.com:3939/content/1095/tracker-report.nb.html). If you log into RStudio Connect you can create custom report versions, email yourself a copy, and download the associated report in Excel.
+* [Shiny application](). If you log into R Studio Connect you can adjust the runtime settings and inspect the logs.
+* [Flexdashboard](http://colorado.rstudio.com:3939/content/1094/). If you log into R Studio Connect you can adjust the runtime settings and inspect the logs.
 
 ## RStudio Connect
 
-RStudio Connect is a server product from RStudio for secure sharing of R content. It is on-premises software you run behind your firewall. You keep control of your data and who has access. With RStudio Connect you can see all your content, decide who should be able to view and collaborate on it, tune performance, schedule updates, and view logs. You can schedule your R Markdown reports to run automatically or even distribute the latest version by email.
+[RStudio Connect](https://beta.rstudioconnect.com/connect/) is a server product from RStudio for secure sharing of R content. It is on-premises software you run behind your firewall. You keep control of your data and who has access. With RStudio Connect you can see all your content, decide who should be able to view and collaborate on it, tune performance, schedule updates, and view logs. You can schedule your R Markdown reports to run automatically or even distribute the latest version by email.
