@@ -1,6 +1,6 @@
 ---
 title: Customer Tracker Report
-output: html_notebook
+output: html_document
 params:
   seg: 
     label: "Segment:"
@@ -23,16 +23,20 @@ params:
 This report shows pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
 
 ```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 library(readr)
 library(tidyverse)
 library(plotly)
 library(openxlsx)
+```
+
+```{r pulldata, cache=TRUE}
 curr <- read_csv("data/trackerCalcCurr.csv")
 pre <- read_csv("data/trackerCalcPre.csv")
 users <- read_csv("data/users.csv")
 ```
 
-```{r format, include=FALSE}
+```{r format}
 f <- function(x, y) {100 * (y / x - 1)}
 dat <- bind_cols(
   curr %>%
@@ -70,7 +74,7 @@ dat <- bind_cols(
   )
 ```
 
-```{r plot, echo=FALSE, fig.height=5, fig.width=10}
+```{r plot, fig.height=5, fig.width=10}
 pdat <- dat %>%
   select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
   gather(seg, metric, -week) %>%
@@ -87,7 +91,7 @@ ggplotly(p1)
 ```
 
 
-```{r data, echo=FALSE}
+```{r data}
 out <- dat %>%
   select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
          purUserCurr, itemsPurPre, itemsPurCurr,	dollItemsPre, dollItemsCurr) %>%
@@ -111,7 +115,7 @@ saveWorkbook(wb, reportName, overwrite = TRUE)
 
 [`Download Report`](`r reportName`)
 
-```{r email, echo=FALSE}
+```{r email}
 library(rmarkdown)
 output_metadata$set("rsc_output_files" = list(reportName))
 output_metadata$set("rsc_email_attachments" = list(reportName))
