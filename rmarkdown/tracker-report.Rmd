@@ -1,7 +1,6 @@
 ---
-title: "Customer Tracker Report"
-output: ioslides_presentation
-date: "`r Sys.Date()`"
+title: Customer Tracker Report
+output: html_document
 params:
   seg: 
     label: "Segment:"
@@ -21,14 +20,7 @@ params:
     choices: [Week, YTD]
 ---
 
-## Overview
-
-Data were compared from pre and post periods by week. This report shows pecentage change by:
-
-* `r params$seg` (segment)
-* `r params$grp` (group)
-* `r params$per` (period)
-
+This report shows pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
@@ -82,9 +74,7 @@ dat <- bind_cols(
   )
 ```
 
-## Results
-
-```{r plot}
+```{r plot, fig.height=5, fig.width=10}
 pdat <- dat %>%
   select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
   gather(seg, metric, -week) %>%
@@ -100,15 +90,18 @@ p1 <- ggplot(data = filter(pdat, seg != "dollarsPct"), aes(week, metric, fill = 
 ggplotly(p1)
 ```
 
-## Detail
 
 ```{r data}
 out <- dat %>%
-  select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
-  mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
+  select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
+         purUserCurr, itemsPurPre, itemsPurCurr,	dollItemsPre, dollItemsCurr) %>%
+  mutate(purUserCurr = 100 * purUserCurr) %>%
+  mutate(purUserPre = 100 * purUserPre) %>%
+  mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
 
-knitr::kable(head(out))
+knitr::kable(out)
 ```
+
 
 ```{r download, include=FALSE}
 reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
@@ -120,12 +113,12 @@ writeData(wb, "Summary", out, startRow = 21)
 saveWorkbook(wb, reportName, overwrite = TRUE)
 ```
 
-[`Download Report`](`r reportName`)
-
 ```{r email}
 library(rmarkdown)
 output_metadata$set("rsc_output_files" = list(reportName))
 output_metadata$set("rsc_email_attachments" = list(reportName))
 output_metadata$set("rsc_email_subject" = reportName)
 ```
+
+[`Download Report`](`r reportName`)
 

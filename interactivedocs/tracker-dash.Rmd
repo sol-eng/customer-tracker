@@ -95,7 +95,7 @@ p1 <- reactive({
   theme_minimal()
 })
 
-renderPlotly({p1()})
+renderPlot({p1()})
 ```
     
 ### Data

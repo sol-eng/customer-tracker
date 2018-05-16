@@ -1,17 +1,4 @@
-# Replacing Excel with R
-
-Creating and managing complex Excel dashboards leads to issues with accuracy and compliance. Creating your dashboards with reproducible code improves accuracy and opens the door for greater collaboration. You can use parameterized R Markdown reports to create complex, interactive dashboards in R. Hosting these dashboards securely in RStudio Connect gives you control over who has access and what operations are run. By using the R programming language along with R Markdown and RStudio Connect you avoid mainy of the issues that come with Excel.
-
-## Comparison
-
-Solution              | Author  | Render  | Audience       | Snapshot   | Capabilities
-----------------------|---------|---------|----------------|------------|----------------
-0. Excel Workbook     | Anyone  | Dynamic | Push (email)   | Save as... | Excel functions
-1. R Markdown Report  | R users | Batch   | Push (email)   | Yes        | Full power of R
-2. Shiny Application  | R users | Dynamic | Pull (website) | No*        | Full power of R
-3. R Markdown + Shiny | R users | Dynamic | Pull (website) | No*        | Full power of R
-
-*\* Snapshots with Shiny can be rendered by the user, but typically require an R Markdown file as input. For more details, see [Generating Downloadable Reports]() and this [example](https://shiny.rstudio.com/gallery/download-knitr-reports.html).*
+# Customer tracker
 
 ## Documents
 
