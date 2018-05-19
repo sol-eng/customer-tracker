@@ -91,7 +91,7 @@ renderPlot({p1()})
 ```{r}
 renderTable({
   dat() %>%
-  select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
+  select(week, dollarsPre, dollarsCurr, purUserPre, 
          purUserCurr, itemsPurPre, itemsPurCurr,	dollItemsPre, dollItemsCurr) %>%
   mutate(purUserCurr = 100 * purUserCurr) %>%
   mutate(purUserPre = 100 * purUserPre) %>%
