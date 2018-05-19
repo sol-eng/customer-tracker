@@ -9,7 +9,9 @@ These assets are published to [RStudio Connect](https://www.rstudio.com/products
 * [R Markdown Report](http://colorado.rstudio.com/rsc/tracker-report/tracker-report.html)
 * [PDF Report](http://colorado.rstudio.com:3939/content/1109/tracker-pdf.pdf)
 * [Presentation](http://colorado.rstudio.com:3939/content/1110/tracker-ioslides.html)
+* [Interactive Doc](http://colorado.rstudio.com:3939/content/1121/)
 * [Flexdashboard](http://colorado.rstudio.com:3939/content/1094/)
+* [Tracker App](http://colorado.rstudio.com:3939/content/1120/)
 * [Plumber API](http://colorado.rstudio.com:3939/content/1117/)
 
 Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.

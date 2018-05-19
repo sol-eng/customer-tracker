@@ -3,6 +3,8 @@ library(shinymaterial)
 library(readr)
 library(tidyverse)
 library(shiny)
+library(plotly)
+library(DT)
 
 curr <- read_csv("data/trackerCalcCurr.csv")
 pre <- read_csv("data/trackerCalcPre.csv")
@@ -28,13 +30,13 @@ ui <- material_page(
       material_row(
         material_card(
           title = "Percent Change by Week",
-          plotOutput("plot")
+          plotlyOutput("plot")
         )
       ),
       material_row(
         material_card(
           title = "Data",
-          tableOutput("data")
+          dataTableOutput("data")
         )
       )
     )
@@ -88,24 +90,31 @@ server <- function(input, output) {
       mutate(metric = round(metric, 2))
   })
   
-  output$plot <- renderPlot({
-    ggplot(data = filter(pdat(), seg != "dollarsPct"), aes(week, metric, fill = seg)) +
+  output$plot <- renderPlotly({
+    p1 <- ggplot(data = filter(pdat(), seg != "dollarsPct"), aes(week, metric, fill = seg)) +
       geom_bar(stat = "Identity") + 
       geom_line(data = filter(pdat(), seg == "dollarsPct"), aes(week, metric), col = "darkgrey") +
       scale_fill_manual(values = alpha(c("darkgrey", "lightgreen", "salmon", "lightblue", "orange"), 0.5)) +
       labs(x = "Week", y = "Percent") +
       theme_minimal()
+    ggplotly(p1)
   })
   
-  output$data <- renderTable({
+  output$data <- renderDataTable({
     dat() %>%
-      select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
-             purUserCurr, itemsPurPre, itemsPurCurr,  dollItemsPre, dollItemsCurr) %>%
-      mutate(purUserCurr = 100 * purUserCurr) %>%
-      mutate(purUserPre = 100 * purUserPre) %>%
-      mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
+      select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
+      mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
   })
   
 }
 
 shinyApp(ui = ui, server = server)
+
+
+
+
+
+
+
+
+
