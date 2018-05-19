@@ -1,5 +1,7 @@
 # Customer tracker
 
+Read about the Customer Tracker on [R Views](https://rviews.rstudio.com/2018/05/16/replacing-excel-reports-with-r-markdown-and-shiny/).
+
 ## Documents
 
 These assets are published to [RStudio Connect](https://www.rstudio.com/products/connect/). Click [here](https://beta.rstudioconnect.com/connect/) to try out RStudio Connect.
