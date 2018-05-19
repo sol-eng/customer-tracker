@@ -49,13 +49,23 @@ dat <- function(seg, grp, per){
     )
 }
 
-#' @get /plot
-#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
-#' @param grp Group (Total, Core, Extra)
+#' @get /data
 #' @param per Period (Week, YTD)
-#' @serializer plot
-plot <- function(seg = "Total", grp = "Total", per = "Week"){
+#' @param grp Group (Total, Core, Extra)
+#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
+out <- function(seg = "Total", grp = "Total", per = "Week"){
+  dat(seg, grp, per) %>%
+    select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
+    mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
+}
 
+#' @get /plot
+#' @param per Period (Week, YTD)
+#' @param grp Group (Total, Core, Extra)
+#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
+#' @png
+plot <- function(seg = "Total", grp = "Total", per = "Week"){
+  
   pdat <- dat(seg, grp, per) %>%
     select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
     gather(seg, metric, -week) %>%
@@ -71,14 +81,3 @@ plot <- function(seg = "Total", grp = "Total", per = "Week"){
   print(p1)
 }
 
-#' @get /data
-#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
-#' @param grp Group (Total, Core, Extra)
-#' @param per Period (Week, YTD)
-out <- function(seg = "Total", grp = "Total", per = "Week"){
-  dat(seg, grp, per) %>%
-    select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
-    mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
-}
-
-# rsconnect::deployAPI("plumber", account = "nathan", server = "colorado.rstudio.com", appName = "Tracker-API")
