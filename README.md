@@ -12,10 +12,10 @@ You can create your content with these open source R packages like [R Markdown](
 
 * [R Markdown Report](http://colorado.rstudio.com/rsc/tracker-report/tracker-report.html)
 * [PDF Report](http://colorado.rstudio.com:3939/content/1109/tracker-pdf.pdf)
-* [Presentation](http://colorado.rstudio.com:3939/content/1110/tracker-ioslides.html)
-* [Interactive Doc](http://colorado.rstudio.com:3939/content/1121/)
+* [HTML Presentation](http://colorado.rstudio.com:3939/content/1110/tracker-ioslides.html)
+* [Interactive Document](http://colorado.rstudio.com:3939/content/1121/)
 * [Flexdashboard](http://colorado.rstudio.com:3939/content/1094/)
-* [Tracker App](http://colorado.rstudio.com:3939/content/1120/)
+* [Shiny App](http://colorado.rstudio.com:3939/content/1120/)
 * [Plumber API](http://colorado.rstudio.com:3939/content/1117/)
 
 ## RStudio Connect <img src="img/rsc-logo.png" width="45"/>
