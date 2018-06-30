@@ -5,16 +5,29 @@ These dashboards and reports track key performance metrics for customers by week
 <center><a href="http://colorado.rstudio.com:3939/tracker/README.html"><img src="images/tracker-rmd.png" width="500"/></a></center>
 
 
-## Published Examples <img src="images/publish.png" width="50"/>
+## Published Output Types <img src="images/publish.png" width="50"/>
 
 You can create your content with these open source R packages like [R Markdown](https://rmarkdown.rstudio.com/), [Shiny](http://shiny.rstudio.com/), or [Plumber](https://www.rplumber.io/). After you create your content, you can publish it to [RStudio Connect](https://beta.rstudioconnect.com/connect/). It is easy to turn your R code into reports, dashboards, apps, and API's. The following output formats for the customer tracker are hosted on [RStudio Connect](https://beta.rstudioconnect.com/connect/):
 
-* [R Markdown Report](http://colorado.rstudio.com/rsc/tracker-report/tracker-report.html) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1095/access)</small>
+#### Reports
+
+* [HTML Report](http://colorado.rstudio.com/rsc/tracker-report/tracker-report.html) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1095/access)</small>
 * [PDF Report](http://colorado.rstudio.com:3939/content/1109/tracker-pdf.pdf) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1109/access) </small>
+* [Word Report](http://colorado.rstudio.com:3939/content/1247/vcoWkF5eS/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1247/access/1432) </small>
+
+#### Presentations
+
 * [HTML Presentation](http://colorado.rstudio.com:3939/content/1110/tracker-ioslides.html) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1110/access/1229)</small>
+* [PowerPoint Presentation](http://colorado.rstudio.com:3939/content/1246/vMEHUS5Ks/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1246/access/1429)</small>
+
+#### Interactive docs and apps
+
 * [Interactive Document](http://colorado.rstudio.com:3939/content/1121/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1121/access)</small>
 * [Flexdashboard](http://colorado.rstudio.com:3939/content/1094/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1094/access)</small>
 * [Shiny App](http://colorado.rstudio.com:3939/content/1120/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1120)</small>
+
+#### API's
+
 * [Plumber API](http://colorado.rstudio.com:3939/content/1117/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1117/access)</small>
 
 ## RStudio Connect <img src="images/rsc-logo.png" width="45"/>

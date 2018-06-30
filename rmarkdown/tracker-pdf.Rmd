@@ -32,7 +32,6 @@ params:
     label: 'Segment:'
     value: Total
 output:
-  word_document: default
   pdf_document: default
 ---
 

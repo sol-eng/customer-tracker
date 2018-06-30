@@ -1,38 +1,41 @@
 ---
 title: "Customer Tracker Report"
-output: powerpoint_presentation
-date: "`r Sys.Date()`"
 params:
-  seg: 
-    label: "Segment:"
-    value: Total
+  grp:
+    choices:
+    - Total
+    - Core
+    - Extra
     input: select
-    choices: [Total, Heavy, Mainstream, Focus1, Focus2, 
-              Specialty, Diverse1, Diverse2, Other, New]
-  grp: 
-    label: "Group:"
+    label: 'Group:'
     value: Total
-    input: select
-    choices: [Total, Core, Extra]
-  per: 
-    label: "Period:"
-    value: Week
+  per:
+    choices:
+    - Week
+    - YTD
     input: radio
-    choices: [Week, YTD]
+    label: 'Period:'
+    value: Week
+  seg:
+    choices:
+    - Total
+    - Heavy
+    - Mainstream
+    - Focus1
+    - Focus2
+    - Specialty
+    - Diverse1
+    - Diverse2
+    - Other
+    - New
+    input: select
+    label: 'Segment:'
+    value: Total
+output:
+  word_document: default
 ---
 
-```{r, include=FALSE}
-if (is.null(webshot:::find_phantom())) webshot::install_phantomjs()
-```
-
-## Overview
-
-Data were compared from pre and post periods by week. This report shows pecentage change by:
-
-* `r params$seg` (segment)
-* `r params$grp` (group)
-* `r params$per` (period)
-
+This report shows pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
@@ -40,6 +43,7 @@ library(readr)
 library(tidyverse)
 library(plotly)
 library(openxlsx)
+library(tinytex)
 ```
 
 ```{r pulldata, cache=TRUE}
@@ -86,46 +90,25 @@ dat <- bind_cols(
   )
 ```
 
-## Results
-
-```{r plot, fig.height=7.5, fig.width=15}
+```{r plot, fig.height=5, fig.width=10}
 pdat <- dat %>%
   select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
   gather(seg, metric, -week) %>%
   mutate(metric = round(metric, 2))
 
-p1 <- ggplot(data = filter(pdat, seg != "dollarsPct"), aes(week, metric, fill = seg)) +
+ggplot(data = filter(pdat, seg != "dollarsPct"), aes(week, metric, fill = seg)) +
   geom_bar(stat = "Identity") + 
   geom_line(data = filter(pdat, seg == "dollarsPct"), aes(week, metric), col = "darkgrey") +
   scale_fill_manual(values = alpha(c("darkgrey", "lightgreen", "salmon", "lightblue", "orange"), 0.5)) +
   labs(x = "Week", y = "Percent", title = "Percentage change by Week") +
   theme_minimal()
-
-ggplotly(p1)
 ```
 
-## Detail
 
 ```{r data}
-out <- dat %>%
+dat %>%
   select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
-  mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
-
-knitr::kable(head(out))
+  mutate_at(vars(dollarsPct:dollItemsPct), round, 2) %>%
+  knitr::kable(.)
 ```
 
-```{r download, include=FALSE}
-reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
-wb <- createWorkbook()
-addWorksheet(wb, "Summary", gridLines = FALSE)
-print(p1)
-insertPlot(wb, "Summary", width = 8)
-writeData(wb, "Summary", out, startRow = 21)
-saveWorkbook(wb, reportName, overwrite = TRUE)
-```
-
-```{r email}
-library(rmarkdown)
-output_metadata$set("rsc_email_attachments" = list(reportName))
-output_metadata$set("rsc_email_subject" = reportName)
-```
