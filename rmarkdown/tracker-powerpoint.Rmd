@@ -21,10 +21,6 @@ params:
     choices: [Week, YTD]
 ---
 
-```{r, include=FALSE}
-if (is.null(webshot:::find_phantom())) webshot::install_phantomjs()
-```
-
 ## Overview
 
 Data were compared from pre and post periods by week. This report shows pecentage change by:
@@ -113,6 +109,17 @@ out <- dat %>%
 
 knitr::kable(head(out))
 ```
+
+## Shiny App
+
+```{r webshot, cache=TRUE, screenshot.opts=list(delay=3), fig.width=15, fig.cap="Click to open"}
+if (is.null(webshot:::find_phantom())) webshot::install_phantomjs()
+knitr::include_app('http://colorado.rstudio.com/rsc/content/1120/')
+```
+
+::: notes
+Click on the image to open the Shiny app in RStudio Connect. Or visit online at http://colorado.rstudio.com/rsc/content/1120/.
+:::
 
 ```{r download, include=FALSE}
 reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
