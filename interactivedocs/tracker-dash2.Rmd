@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+runtime: shiny
+---
+
+```{r}
+library(flexdashboard)
+library(DT)
+library(ggplot2)
+options(DT.options = list(scrollY="100vh"))
+```
+
+Inputs {.sidebar}
+==============================
+
+Here
+
+we
+
+have
+
+inputs
+
+Body
+==============================
+
+Column  
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+DT::dataTableOutput('DTtest')
+
+output$DTtest <- DT::renderDataTable(DT::datatable(diamonds[1:1000,] 
+                               ,options = list(list(scrollY="300px"
+                                                 , scrollX="300px"
+                                                 , pageLength = 100
+                                                 ))
+                               ,  filter = 'top')
+)
+```
+
+

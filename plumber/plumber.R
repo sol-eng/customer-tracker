@@ -1,6 +1,6 @@
-#' @apiTitle Customer Tracker
-#' @apiDescription See the percentage breakdown of KPI's by week.
-#' @apiVersion 1.0.1
+#* @apiTitle Customer Tracker
+#* @apiDescription See the percentage breakdown of KPI's by week.
+#* @apiVersion 1.0.1
 
 library(readr)
 library(tidyverse)
@@ -49,21 +49,21 @@ dat <- function(seg, grp, per){
     )
 }
 
-#' @get /data
-#' @param per Period (Week, YTD)
-#' @param grp Group (Total, Core, Extra)
-#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
+#* @get /data
+#* @param per Period (Week, YTD)
+#* @param grp Group (Total, Core, Extra)
+#* @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
 out <- function(seg = "Total", grp = "Total", per = "Week"){
   dat(seg, grp, per) %>%
     select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
     mutate_at(vars(dollarsPct:dollItemsPct), round, 2)
 }
 
-#' @get /plot
-#' @param per Period (Week, YTD)
-#' @param grp Group (Total, Core, Extra)
-#' @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
-#' @png
+#* @get /plot
+#* @param per Period (Week, YTD)
+#* @param grp Group (Total, Core, Extra)
+#* @param seg Segment (Total, Heavy, Mainstream, Focus1, Focus2, Specialty, Diverse1, Diverse2, Other, New)
+#* @png
 plot <- function(seg = "Total", grp = "Total", per = "Week"){
   
   pdat <- dat(seg, grp, per) %>%

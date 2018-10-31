@@ -18,6 +18,7 @@ selectInput("seg", "Segment", c("Total", "Heavy", "Mainstream", "Focus1", "Focus
 selectInput('grp', 'Group', c("Total", "Core", "Extra"))
     
 radioButtons("per", "Period", c("Week", "YTD"))
+
 ```
 
 

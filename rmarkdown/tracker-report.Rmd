@@ -1,23 +1,38 @@
 ---
-title: Customer Tracker Report
-output: html_document
+title: "Customer Tracker Report"
 params:
-  seg: 
-    label: "Segment:"
-    value: Total
+  grp:
+    choices:
+    - Total
+    - Core
+    - Extra
     input: select
-    choices: [Total, Heavy, Mainstream, Focus1, Focus2, 
-              Specialty, Diverse1, Diverse2, Other, New]
-  grp: 
-    label: "Group:"
+    label: 'Group:'
     value: Total
-    input: select
-    choices: [Total, Core, Extra]
-  per: 
-    label: "Period:"
-    value: Week
+  per:
+    choices:
+    - Week
+    - YTD
     input: radio
-    choices: [Week, YTD]
+    label: 'Period:'
+    value: Week
+  seg:
+    choices:
+    - Total
+    - Heavy
+    - Mainstream
+    - Focus1
+    - Focus2
+    - Specialty
+    - Diverse1
+    - Diverse2
+    - Other
+    - New
+    input: select
+    label: 'Segment:'
+    value: Total
+output:
+  html_document: default
 ---
 
 This report shows pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
@@ -28,6 +43,7 @@ library(readr)
 library(tidyverse)
 library(plotly)
 library(openxlsx)
+library(formattable)
 ```
 
 ```{r pulldata, cache=TRUE}
@@ -99,26 +115,56 @@ out <- dat %>%
   mutate(purUserPre = 100 * purUserPre) %>%
   mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
 
-knitr::kable(out)
+tab <- dat %>%
+  mutate(Week = week,
+         Revenue = percent(dollarsPct / 100, digits = 1), 
+         Customers = percent(usersPct / 100, digits = 1), 
+         Visits = percent(purUserPct / 100, digits = 1),
+         Items = percent(itemsPurPct / 100, digits = 1), 
+         Spend = percent(dollItemsPct / 100, digits = 1)
+         ) %>%
+  select(Week, Revenue, Customers, Visits, Items, Spend)
 ```
 
 
 ```{r download, include=FALSE}
-reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
+reportName <- paste0("Tracker-", params$seg, params$grp, params$per)
+reportxls <- paste0(reportName, ".xlsx")
 wb <- createWorkbook()
 addWorksheet(wb, "Summary", gridLines = FALSE)
 print(p1)
 insertPlot(wb, "Summary", width = 8)
 writeData(wb, "Summary", out, startRow = 21)
-saveWorkbook(wb, reportName, overwrite = TRUE)
+saveWorkbook(wb, reportxls, overwrite = TRUE)
 ```
 
 ```{r email}
 library(rmarkdown)
-output_metadata$set("rsc_output_files" = list(reportName))
-output_metadata$set("rsc_email_attachments" = list(reportName))
-output_metadata$set("rsc_email_subject" = reportName)
+library(blastula)
+library(formattable)
+
+email <- compose_email(
+body = "
+Hello Team,
+
+Here is the report for {reportName}.
+
+{add_ggplot(p1, width = 6, height = 3)}
+
+{formattable(head(tab))}
+
+- Nathan
+  "
+)
+
+rmarkdown::output_metadata$set(
+  rsc_email_subject = reportName,
+  rsc_email_body_html = email$html_str,
+  rsc_email_images = email$images,
+  rsc_output_files = list(reportxls),
+  rsc_email_attachments = list(reportName)
+)
 ```
 
-[`Download Report`](`r reportName`)
+[`Download Report`](`r reportxls`)
 
