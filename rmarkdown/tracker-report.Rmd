@@ -44,6 +44,7 @@ library(tidyverse)
 library(plotly)
 library(openxlsx)
 library(formattable)
+library(blastula)
 ```
 
 ```{r pulldata, cache=TRUE}
@@ -53,7 +54,7 @@ users <- read_csv("data/users.csv")
 ```
 
 ```{r format}
-f <- function(x, y) {100 * (y / x - 1)}
+f <- function(x, y) {(y / x - 1)}
 dat <- bind_cols(
   curr %>%
     filter(segment == params$seg) %>%
@@ -65,106 +66,124 @@ dat <- bind_cols(
     rename_at(1:3, ~c("purchasesPre", "itemsPre", "dollarsPre"))
 ) %>%
   mutate(
-    week = 1:52,
-    dollarsPct = f(dollarsPre, dollarsCurr),
-    usersPre = filter(users, segment == params$seg) %>% .$pre,
-    usersCurr = filter(users, segment == params$seg) %>% .$curr,
-    usersPct = f(usersPre, usersCurr),
-    purUserPre = purchasesPre / usersPre,
-    purUserCurr = purchasesCurr / usersCurr,
-    purUserPct = f(purUserPre, purUserCurr),
-    itemsPurPre = itemsPre / purchasesPre,
-    itemsPurCurr = itemsCurr / purchasesCurr,
-    itemsPurPct = f(itemsPurPre, itemsPurCurr),
-    dollItemsPre = dollarsPre / itemsPre,
-    dollItemsCurr = dollarsCurr / itemsCurr,
-    dollItemsPct = f(dollItemsPre, dollItemsCurr)
+    Week = 1:52,
+    RevenuePre = dollarsPre,
+    RevenueCurr = dollarsCurr,
+    Revenue = f(dollarsPre, dollarsCurr),
+    CustomersPre = filter(users, segment == params$seg) %>% .$pre,
+    CustomersCurr = filter(users, segment == params$seg) %>% .$curr,
+    Customers = f(CustomersPre, CustomersCurr),
+    VisitsPre = purchasesPre / CustomersPre,
+    VisitsCurr = purchasesCurr / CustomersCurr,
+    Visits = f(VisitsPre, VisitsCurr),
+    ItemsPre = itemsPre / purchasesPre,
+    ItemsCurr = itemsCurr / purchasesCurr,
+    Items = f(ItemsPre, ItemsCurr),
+    PricesPre = dollarsPre / itemsPre,
+    PricesCurr = dollarsCurr / itemsCurr,
+    Prices = f(PricesPre, PricesCurr)
   ) %>%
-  filter(week <= 22) %>%
+  filter(Week <= 22) %>%
+  arrange(desc(Week)) %>%
   select(
-    week, dollarsPre, dollarsCurr, dollarsPct,
-    usersPre, usersCurr, usersPct,
-    purUserPre, purUserCurr, purUserPct,
-    itemsPurPre, itemsPurCurr, itemsPurPct,
-    dollItemsPre, dollItemsCurr, dollItemsPct
+    Week, RevenuePre, RevenueCurr, Revenue,
+    CustomersPre, CustomersCurr, Customers,
+    VisitsPre, VisitsCurr, Visits,
+    ItemsPre, ItemsCurr, Items,
+    PricesPre, PricesCurr, Prices
   )
 ```
 
 ```{r plot, fig.height=5, fig.width=10}
 pdat <- dat %>%
-  select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
-  gather(seg, metric, -week) %>%
-  mutate(metric = round(metric, 2))
+  select(Week, Revenue, Customers, Visits, Items, Prices) %>%
+  gather(seg, metric, -Week) %>%
+  mutate(metric = round(100 * metric, 2)) %>%
+  mutate(seg = factor(seg, levels = c("Prices", "Items", "Visits", "Customers", "Revenue")))
 
-p1 <- ggplot(data = filter(pdat, seg != "dollarsPct"), aes(week, metric, fill = seg)) +
+p1 <- ggplot(filter(pdat, seg != "Revenue"), aes(Week, metric, fill = seg)) +
   geom_bar(stat = "Identity") + 
-  geom_line(data = filter(pdat, seg == "dollarsPct"), aes(week, metric), col = "darkgrey") +
-  scale_fill_manual(values = alpha(c("darkgrey", "lightgreen", "salmon", "lightblue", "orange"), 0.5)) +
+  geom_line(data = filter(pdat, seg == "Revenue"), aes(Week, metric), col = "darkgrey") +
+  scale_fill_manual(values = alpha(c("orange", "salmon", "lightgreen", "darkgrey", "lightblue"), 0.5)) +
   labs(x = "Week", y = "Percent", title = "Percentage change by Week") +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.title=element_blank())
 
 ggplotly(p1)
 ```
 
 
 ```{r data}
-out <- dat %>%
-  select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
-         purUserCurr, itemsPurPre, itemsPurCurr,	dollItemsPre, dollItemsCurr) %>%
-  mutate(purUserCurr = 100 * purUserCurr) %>%
-  mutate(purUserPre = 100 * purUserPre) %>%
-  mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
+sign_formatter <- formatter("span", 
+  style = x ~ style(color = ifelse(x > 0, "green", 
+    ifelse(x < 0, "red", "black"))))
 
-tab <- dat %>%
-  mutate(Week = week,
-         Revenue = percent(dollarsPct / 100, digits = 1), 
-         Customers = percent(usersPct / 100, digits = 1), 
-         Visits = percent(purUserPct / 100, digits = 1),
-         Items = percent(itemsPurPct / 100, digits = 1), 
-         Spend = percent(dollItemsPct / 100, digits = 1)
-         ) %>%
-  select(Week, Revenue, Customers, Visits, Items, Spend)
+bar_formatter <- formatter("span",
+  style = x ~ style(
+    display = "inline-block", 
+    direction = ifelse(x > 0, "rtl", "ltr"), 
+    `border-radius` = "4px", 
+    `padding-right` = "2px",
+    `font-weight` = "bold",
+    `background-color` = csscolor(ifelse(x > 0, "palegreen", "pink")), 
+    width = percent(proportion(as.numeric(x)))))
+
+tile_formatter <- formatter("span",
+  style = x ~ style(
+    display = "block", 
+    padding = "0 4px", 
+    `border-radius` = "4px",
+    `color` = "grey50",
+    `font-weight` = "bold",
+    `background-color` = ifelse(x > 0,
+                                csscolor(gradient(as.numeric(x), "white", "palegreen")),
+                                csscolor(gradient(as.numeric(x), "pink", "white")))))
+
+# 
+t0 <- dat %>%
+  select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices)
+
+t1 <- t1 %>%
+  select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices) %>%
+  mutate_at(vars(Revenue:Prices), ~ percent(.x, digits = 1)) %>%
+  mutate_at(vars(RevenuePre, RevenueCurr), ~ currency(.x, digits = 0))
+
+t2 <- formattable(t1, list(
+    Revenue = tile_formatter,
+    Customers = sign_formatter,
+    Visits = sign_formatter,
+    Items = sign_formatter,
+    Prices = sign_formatter
+    )
+)
+
+t2
 ```
 
-
 ```{r download, include=FALSE}
-reportName <- paste0("Tracker-", params$seg, params$grp, params$per)
-reportxls <- paste0(reportName, ".xlsx")
+reportLab <- paste("Tracker", params$seg, params$grp, params$per, sep = "-")
+xlsfile <- paste0(reportLab, ".xlsx")
 wb <- createWorkbook()
 addWorksheet(wb, "Summary", gridLines = FALSE)
 print(p1)
 insertPlot(wb, "Summary", width = 8)
-writeData(wb, "Summary", out, startRow = 21)
-saveWorkbook(wb, reportxls, overwrite = TRUE)
+writeData(wb, "Summary", t0, startRow = 21)
+addWorksheet(wb, sheetName = "alldata")
+writeDataTable(wb, sheet = 2, dat)
+saveWorkbook(wb, xlsfile, overwrite = TRUE)
 ```
 
-```{r email}
-library(rmarkdown)
-library(blastula)
-library(formattable)
-
-email <- compose_email(
-body = "
-Hello Team,
-
-Here is the report for {reportName}.
-
-{add_ggplot(p1, width = 6, height = 3)}
-
-{formattable(head(tab))}
-
-- Nathan
-  "
-)
+```{r}
+p2 <- add_ggplot(p1, 6, 3)
+email <- compose_email("Here is the {reportLab} report: {p2} \n {t2} Nathan")
 
 rmarkdown::output_metadata$set(
-  rsc_email_subject = reportName,
+  rsc_email_subject = reportLab,
   rsc_email_body_html = email$html_str,
   rsc_email_images = email$images,
-  rsc_output_files = list(reportxls),
-  rsc_email_attachments = list(reportName)
+  rsc_email_attachments = xlsfile
 )
 ```
 
-[`Download Report`](`r reportxls`)
+[`Download Report`](`r xlsfile`)
 
