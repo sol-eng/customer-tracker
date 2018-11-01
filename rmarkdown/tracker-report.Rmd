@@ -139,15 +139,17 @@ tile_formatter <- formatter("span",
                                 csscolor(gradient(as.numeric(x), "white", "palegreen")),
                                 csscolor(gradient(as.numeric(x), "pink", "white")))))
 
-# 
+# Table data
 t0 <- dat %>%
   select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices)
 
-t1 <- t1 %>%
+# Number formats
+t1 <- t0 %>%
   select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices) %>%
   mutate_at(vars(Revenue:Prices), ~ percent(.x, digits = 1)) %>%
   mutate_at(vars(RevenuePre, RevenueCurr), ~ currency(.x, digits = 0))
 
+# HTML formats
 t2 <- formattable(t1, list(
     Revenue = tile_formatter,
     Customers = sign_formatter,
