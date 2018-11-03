@@ -2,13 +2,55 @@ library(shiny)
 library(shinymaterial)
 library(readr)
 library(tidyverse)
-library(shiny)
+library(formattable)
+library(openxlsx)
 
 curr <- read_csv("data/trackerCalcCurr.csv")
 pre <- read_csv("data/trackerCalcPre.csv")
 users <- read_csv("data/users.csv")
 
-f <- function(x, y) {100 * (y / x - 1)}
+f <- function(x, y) {y / x - 1}
+
+sign_formatter <- formatter("span", 
+                            style = x ~ style(color = ifelse(x > 0, "green", 
+                                                             ifelse(x < 0, "red", "black"))))
+
+bar_formatter <- formatter("span",
+                           style = x ~ style(
+                             display = "inline-block", 
+                             direction = ifelse(x > 0, "rtl", "ltr"), 
+                             `border-radius` = "4px", 
+                             `padding-right` = "2px",
+                             `font-weight` = "bold",
+                             `background-color` = csscolor(ifelse(x > 0, "palegreen", "pink")), 
+                             width = percent(proportion(as.numeric(x)))))
+
+sign_formatter <- formatter("span", 
+                            style = x ~ style(color = ifelse(x > 0, "green", 
+                                                             ifelse(x < 0, "red", "black"))))
+
+bar_formatter <- formatter("span",
+                           style = x ~ style(
+                             display = "inline-block", 
+                             direction = ifelse(x > 0, "rtl", "ltr"), 
+                             `border-radius` = "4px", 
+                             `padding-right` = "2px",
+                             `font-weight` = "bold",
+                             `background-color` = csscolor(ifelse(x > 0, "palegreen", "pink")), 
+                             width = percent(proportion(as.numeric(x)))))
+
+tile_formatter <- formatter("span",
+                            style = x ~ style(
+                              display = "block", 
+                              padding = "0 4px", 
+                              `border-radius` = "4px",
+                              `color` = "grey50",
+                              `font-weight` = "bold",
+                              `background-color` = ifelse(x > 0,
+                                                          csscolor(gradient(as.numeric(x), "white", "palegreen")),
+                                                          csscolor(gradient(as.numeric(x), "pink", "white")))))
+
+
 
 ui <- material_page(
   title = "Customer Tracker App",
@@ -27,16 +69,17 @@ ui <- material_page(
       width = 10,
       material_row(
         material_card(
-          title = "Percent Change by Week",
+          title = "Percentage Change Year over Year",
           plotOutput("plot")
         )
       ),
       material_row(
         material_card(
-          title = "Data",
-          tableOutput("data")
+          title = "Weekly Data",
+          formattableOutput("dat")
         )
-      )
+      ),
+      downloadButton('downloadData', 'Download')
     )
   )
 )
@@ -45,6 +88,7 @@ ui <- material_page(
 server <- function(input, output) {
   
   dat <- reactive({
+    
     bind_cols(
       curr %>%
         filter(segment == input$seg) %>%
@@ -56,56 +100,108 @@ server <- function(input, output) {
         rename_at(1:3, ~c("purchasesPre", "itemsPre", "dollarsPre"))
     ) %>%
       mutate(
-        week = 1:52,
-        dollarsPct = f(dollarsPre, dollarsCurr),
-        usersPre = filter(users, segment == input$seg) %>% .$pre,
-        usersCurr = filter(users, segment == input$seg) %>% .$curr,
-        usersPct = f(usersPre, usersCurr),
-        purUserPre = purchasesPre / usersPre,
-        purUserCurr = purchasesCurr / usersCurr,
-        purUserPct = f(purUserPre, purUserCurr),
-        itemsPurPre = itemsPre / purchasesPre,
-        itemsPurCurr = itemsCurr / purchasesCurr,
-        itemsPurPct = f(itemsPurPre, itemsPurCurr),
-        dollItemsPre = dollarsPre / itemsPre,
-        dollItemsCurr = dollarsCurr / itemsCurr,
-        dollItemsPct = f(dollItemsPre, dollItemsCurr)
+        Week = 1:52,
+        RevenuePre = dollarsPre,
+        RevenueCurr = dollarsCurr,
+        Revenue = f(dollarsPre, dollarsCurr),
+        CustomersPre = filter(users, segment == input$seg) %>% .$pre,
+        CustomersCurr = filter(users, segment == input$seg) %>% .$curr,
+        Customers = f(CustomersPre, CustomersCurr),
+        VisitsPre = purchasesPre / CustomersPre,
+        VisitsCurr = purchasesCurr / CustomersCurr,
+        Visits = f(VisitsPre, VisitsCurr),
+        ItemsPre = itemsPre / purchasesPre,
+        ItemsCurr = itemsCurr / purchasesCurr,
+        Items = f(ItemsPre, ItemsCurr),
+        PricesPre = dollarsPre / itemsPre,
+        PricesCurr = dollarsCurr / itemsCurr,
+        Prices = f(PricesPre, PricesCurr)
       ) %>%
-      filter(week <= 22) %>%
+      filter(Week <= 22) %>%
+      #arrange(desc(Week)) %>%
       select(
-        week, dollarsPre, dollarsCurr, dollarsPct,
-        usersPre, usersCurr, usersPct,
-        purUserPre, purUserCurr, purUserPct,
-        itemsPurPre, itemsPurCurr, itemsPurPct,
-        dollItemsPre, dollItemsCurr, dollItemsPct
+        Week, RevenuePre, RevenueCurr, Revenue,
+        CustomersPre, CustomersCurr, Customers,
+        VisitsPre, VisitsCurr, Visits,
+        ItemsPre, ItemsCurr, Items,
+        PricesPre, PricesCurr, Prices
       )
+    
   })
   
   pdat <- reactive({
+    
     dat() %>%
-      select(week, dollarsPct, usersPct, purUserPct, itemsPurPct, dollItemsPct) %>%
-      gather(seg, metric, -week) %>%
-      mutate(metric = round(metric, 2))
+      select(Week, Revenue, Customers, Visits, Items, Prices) %>%
+      gather(seg, metric, -Week) %>%
+      mutate(metric = round(100 * metric, 2)) %>%
+      mutate(seg = factor(seg, levels = c("Prices", "Items", "Visits", "Customers", "Revenue")))
+    
+  })
+
+  t0 <- reactive({
+    
+    dat() %>%
+      select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices)
+    
+  })
+  
+  t1 <- reactive({
+    
+    t0() %>%
+      mutate_at(vars(Revenue:Prices), ~ percent(.x, digits = 1)) %>%
+      mutate_at(vars(RevenuePre, RevenueCurr), ~ currency(.x, digits = 0))
+    
+  })
+  
+  p1 <- reactive({
+
+    ggplot(filter(pdat(), seg != "Revenue"), aes(Week, metric, fill = seg)) +
+      geom_bar(stat = "Identity") + 
+      geom_line(data = filter(pdat(), seg == "Revenue"), aes(Week, metric), col = "darkgrey") +
+      scale_fill_manual(values = alpha(c("orange", "salmon", "lightgreen", "darkgrey", "lightblue"), 0.5)) +
+      labs(x = "Week", y = "Percent", title = "Percentage change by Week") +
+      theme_minimal() +
+      theme(legend.title=element_blank())
+    
   })
   
   output$plot <- renderPlot({
-    ggplot(data = filter(pdat(), seg != "dollarsPct"), aes(week, metric, fill = seg)) +
-      geom_bar(stat = "Identity") + 
-      geom_line(data = filter(pdat(), seg == "dollarsPct"), aes(week, metric), col = "darkgrey") +
-      scale_fill_manual(values = alpha(c("darkgrey", "lightgreen", "salmon", "lightblue", "orange"), 0.5)) +
-      labs(x = "Week", y = "Percent") +
-      theme_minimal()
+    
+    p1()
+    
   })
   
-  output$data <- renderTable({
-    dat() %>%
-      select(week, dollarsPre, dollarsCurr, usersPre, usersCurr, purUserPre, 
-             purUserCurr, itemsPurPre, itemsPurCurr,  dollItemsPre, dollItemsCurr) %>%
-      mutate(purUserCurr = 100 * purUserCurr) %>%
-      mutate(purUserPre = 100 * purUserPre) %>%
-      mutate_at(vars(purUserPre:dollItemsCurr), round, 2)
+  output$dat <- renderFormattable({
+    
+    formattable(t1(), list(
+      Revenue = tile_formatter,
+      Customers = sign_formatter,
+      Visits = sign_formatter,
+      Items = sign_formatter,
+      Prices = sign_formatter
+    ))
+    
   })
   
+  output$downloadData <- downloadHandler(
+    
+    filename = function() {
+     paste("Tracker", input$seg, input$grp, input$per, sep = "-") %>%
+        paste0(., ".xlsx")
+    },
+    content = function(file) {
+      wb <- createWorkbook()
+      addWorksheet(wb, "Summary", gridLines = FALSE)
+      renderPlot({p1()})
+      insertPlot(wb, "Summary", width = 8)
+      writeData(wb, "Summary", t0(), startRow = 21)
+      addWorksheet(wb, sheetName = "alldata")
+      writeDataTable(wb, sheet = 2, dat())
+      saveWorkbook(wb, file, overwrite = TRUE)
+    }
+  )
+
 }
 
 shinyApp(ui = ui, server = server)

@@ -35,7 +35,7 @@ output:
   html_document: default
 ---
 
-This report shows pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
+This report shows year over year pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
@@ -84,7 +84,7 @@ dat <- bind_cols(
     Prices = f(PricesPre, PricesCurr)
   ) %>%
   filter(Week <= 22) %>%
-  arrange(desc(Week)) %>%
+  #arrange(desc(Week)) %>%
   select(
     Week, RevenuePre, RevenueCurr, Revenue,
     CustomersPre, CustomersCurr, Customers,
@@ -145,7 +145,6 @@ t0 <- dat %>%
 
 # Number formats
 t1 <- t0 %>%
-  select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Prices) %>%
   mutate_at(vars(Revenue:Prices), ~ percent(.x, digits = 1)) %>%
   mutate_at(vars(RevenuePre, RevenueCurr), ~ currency(.x, digits = 0))
 
