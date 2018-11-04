@@ -69,7 +69,7 @@ ui <- material_page(
       width = 10,
       material_row(
         material_card(
-          title = "Percentage Change Year over Year",
+          title = "Performance Year over Year",
           plotOutput("plot")
         )
       ),
@@ -191,14 +191,17 @@ server <- function(input, output) {
         paste0(., ".xlsx")
     },
     content = function(file) {
+      reportLab <- paste("Tracker", params$seg, params$grp, params$per, sep = "-")
+      pngfile <- paste0(reportLab, ".png")
+      xlsfile <- paste0(reportLab, ".xlsx")
       wb <- createWorkbook()
       addWorksheet(wb, "Summary", gridLines = FALSE)
-      renderPlot({p1()})
-      insertPlot(wb, "Summary", width = 8)
-      writeData(wb, "Summary", t0(), startRow = 21)
-      addWorksheet(wb, sheetName = "alldata")
+      ggsave(pngfile, p1(), "png", width = 6, height = 3)
+      insertImage(wb, "Summary", pngfile)
+      writeData(wb, "Summary", t0(), startRow = 16)
+      addWorksheet(wb, sheetName = "Data")
       writeDataTable(wb, sheet = 2, dat())
-      saveWorkbook(wb, file, overwrite = TRUE)
+      saveWorkbook(wb, xlsfile, overwrite = TRUE)
     }
   )
 

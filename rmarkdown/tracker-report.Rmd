@@ -35,7 +35,7 @@ output:
   html_document: default
 ---
 
-This report shows year over year pecentage change by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
+This report shows performance year over year by: `r params$seg` (segment); `r params$grp` (group); and `r params$per` (period).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
@@ -163,13 +163,14 @@ t2
 
 ```{r download, include=FALSE}
 reportLab <- paste("Tracker", params$seg, params$grp, params$per, sep = "-")
+pngfile <- paste0(reportLab, ".png")
 xlsfile <- paste0(reportLab, ".xlsx")
 wb <- createWorkbook()
 addWorksheet(wb, "Summary", gridLines = FALSE)
-print(p1)
-insertPlot(wb, "Summary", width = 8)
-writeData(wb, "Summary", t0, startRow = 21)
-addWorksheet(wb, sheetName = "alldata")
+ggsave(pngfile, p1, "png", width = 6, height = 3)
+insertImage(wb, "Summary", pngfile)
+writeData(wb, "Summary", t0, startRow = 16)
+addWorksheet(wb, sheetName = "Data")
 writeDataTable(wb, sheet = 2, dat)
 saveWorkbook(wb, xlsfile, overwrite = TRUE)
 ```
