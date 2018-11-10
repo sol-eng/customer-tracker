@@ -37,6 +37,9 @@ library(readr)
 library(tidyverse)
 library(plotly)
 library(openxlsx)
+library(openxlsx)
+library(formattable)
+library(blastula)
 ```
 
 ```{r pulldata, cache=TRUE}
@@ -109,11 +112,51 @@ p1
 ## Detail
 
 ```{r data}
-out <- dat %>%
-  select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Spend) %>%
-  mutate_at(vars(Revenue:Spend), round, 2)
+sign_formatter <- formatter("span", 
+  style = x ~ style(color = ifelse(x > 0, "green", 
+    ifelse(x < 0, "red", "black"))))
 
-knitr::kable(head(out, 12))
+bar_formatter <- formatter("span",
+  style = x ~ style(
+    display = "inline-block", 
+    direction = ifelse(x > 0, "rtl", "ltr"), 
+    `border-radius` = "4px", 
+    `padding-right` = "2px",
+    `font-weight` = "bold",
+    `background-color` = csscolor(ifelse(x > 0, "palegreen", "pink")), 
+    width = percent(proportion(as.numeric(x)))))
+
+tile_formatter <- formatter("span",
+  style = x ~ style(
+    display = "block", 
+    padding = "0 4px", 
+    `border-radius` = "4px",
+    `color` = "grey50",
+    `font-weight` = "bold",
+    `background-color` = ifelse(x > 0,
+                                csscolor(gradient(as.numeric(x), "white", "palegreen")),
+                                csscolor(gradient(as.numeric(x), "pink", "white")))))
+
+# Table data
+t0 <- dat %>%
+  select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Spend)
+
+# Number formats
+t1 <- t0 %>%
+  mutate_at(vars(Revenue:Spend), ~ percent(.x, digits = 1)) %>%
+  mutate_at(vars(RevenuePre, RevenueCurr), ~ currency(.x, digits = 0))
+
+# HTML formats
+t2 <- formattable(t1, list(
+    Revenue = tile_formatter,
+    Customers = sign_formatter,
+    Visits = sign_formatter,
+    Items = sign_formatter,
+    Spend = sign_formatter
+    )
+)
+
+knitr::kable(head(select(t1, -RevenuePre, -RevenueCurr), 12))
 ```
 
 ## Shiny App
@@ -139,9 +182,28 @@ knitr::include_app('http://colorado.rstudio.com/rsc/content/1120/')
 Click on the image to open the Shiny app in RStudio Connect. Or visit online at http://colorado.rstudio.com/rsc/content/1120/.
 :::
 
-```{r email}
-library(rmarkdown)
-reportName <- paste0("Tracker-", params$seg, params$grp, params$per, ".xlsx")
-output_metadata$set("rsc_email_attachments" = list(reportName))
-output_metadata$set("rsc_email_subject" = reportName)
+```{r download, include=FALSE}
+reportLab <- paste("Tracker", params$seg, params$grp, params$per, sep = "-")
+pngfile <- paste0(reportLab, ".png")
+xlsfile <- paste0(reportLab, ".xlsx")
+wb <- createWorkbook()
+addWorksheet(wb, "Summary", gridLines = FALSE)
+ggsave(pngfile, p1, "png", width = 6, height = 3)
+insertImage(wb, "Summary", file = pngfile)
+writeData(wb, "Summary", t0, startRow = 16)
+addWorksheet(wb, sheetName = "Data")
+writeDataTable(wb, sheet = 2, dat)
+saveWorkbook(wb, xlsfile, overwrite = TRUE)
+```
+
+```{r}
+p2 <- add_ggplot(p1, 6, 3)
+email <- compose_email("Here is the {reportLab} report: {p2} \n {t2} Nathan")
+
+rmarkdown::output_metadata$set(
+  rsc_email_subject = reportLab,
+  rsc_email_body_html = email$html_str,
+  rsc_email_images = email$images,
+  rsc_email_attachments = xlsfile
+)
 ```
