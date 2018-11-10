@@ -24,7 +24,7 @@ You can create your content with these open source R packages like [R Markdown](
 
 * [Interactive Document](http://colorado.rstudio.com:3939/content/1121/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1121/access)</small>
 * [Flexdashboard](http://colorado.rstudio.com:3939/content/1642/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1642/access)</small>
-* [Shiny App](http://colorado.rstudio.com:3939/content/1120/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1120)</small>
+* [Shiny App](http://colorado.rstudio.com:3939/tracker-app/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1120)</small>
 
 #### API's
 

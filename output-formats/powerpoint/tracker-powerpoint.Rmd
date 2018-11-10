@@ -113,15 +113,27 @@ out <- dat %>%
   select(Week, RevenuePre, RevenueCurr, Revenue, Customers, Visits, Items, Spend) %>%
   mutate_at(vars(Revenue:Spend), round, 2)
 
-knitr::kable(head(out))
+knitr::kable(head(out, 12))
 ```
 
 ## Shiny App
 
-```{r webshot, cache=TRUE, screenshot.opts=list(delay=3), fig.width=15, fig.cap="Click to explore other segments and groups."}
+:::::::::::::: {.columns}
+::: {.column}
+This report is for:
+
+* Segment: `r params$seg`
+* Group: `r params$grp`
+
+Use the Shiny app to explore explore other segments and groups.
+:::
+::: {.column}
+```{r webshot, cache=TRUE, screenshot.opts=list(delay=3), fig.width=15, fig.cap="Click image to open app."}
 if (is.null(webshot:::find_phantom())) webshot::install_phantomjs()
 knitr::include_app('http://colorado.rstudio.com/rsc/content/1120/')
 ```
+:::
+::::::::::::::
 
 ::: notes
 Click on the image to open the Shiny app in RStudio Connect. Or visit online at http://colorado.rstudio.com/rsc/content/1120/.
