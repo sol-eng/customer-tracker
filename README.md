@@ -1,13 +1,16 @@
-# Customer tracker
+# Customer Tracker
 
-These dashboards and reports track key performance metrics for customers by week. Users can interact with these reports in order to pull the precise data they are looking for. Read more about the customer tracker on [R Views](https://rviews.rstudio.com/2018/05/16/replacing-excel-reports-with-r-markdown-and-shiny/) or or view the code on [Github](https://github.com/sol-eng/customer-tracker).
+Turn your R code into reports, presentations, dashboards, apps, and API's with [R Markdown](https://rmarkdown.rstudio.com/), [Shiny](http://shiny.rstudio.com/), and [Plumber](https://www.rplumber.io/). This repos shows 9 different data products built on the same data set. Use whatever output type is appropriate for your situation. After you create your content, you can publish it to [RStudio Connect](https://www.rstudio.com/products/connect/).
 
-<center><a href="http://colorado.rstudio.com:3939/Tracker/README.html"><img src="images/tracker-rmd.png" width="500"/></a></center>
+## Data Explanation
 
+<center><a href="http://colorado.rstudio.com:3939/Tracker/README.html"><img src="img/tracker.png" width="500"/></a></center>
 
-## Published Output Types <img src="images/publish.png" width="50"/>
+These reports show year over year performance for many customer segments and product groups. Top level performance (i.e. revenue) is decomposed into lower level performance metrics (i.e. customer visits, items purchased, and checkout spend). For example, in week 1 revenue for the all segments and products increased by 22.9 compared to last year. The main contributors to the increase were visits (+12.1%) and spend (+6.3%).
 
-You can create your content with these open source R packages like [R Markdown](https://rmarkdown.rstudio.com/), [Shiny](http://shiny.rstudio.com/), or [Plumber](https://www.rplumber.io/). After you create your content, you can publish it to [RStudio Connect](https://beta.rstudioconnect.com/connect/). It is easy to turn your R code into reports, dashboards, apps, and API's. The following output formats for the customer tracker are hosted on [RStudio Connect](https://beta.rstudioconnect.com/connect/):
+## Output Types <img src="img/publish.png" width="50"/>
+
+The following output formats for the customer tracker are hosted on [RStudio Connect](https://www.rstudio.com/products/connect/):
 
 #### Reports
 
@@ -30,7 +33,13 @@ You can create your content with these open source R packages like [R Markdown](
 
 * [Plumber API](http://colorado.rstudio.com:3939/content/1117/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1117/access)</small>
 
-## RStudio Connect <img src="images/rsc-logo.png" width="45"/>
+## RStudio Connect <img src="img/rsc-logo.png" width="45"/>
 
-[RStudio Connect](https://beta.rstudioconnect.com/connect/) is a server product from RStudio for secure sharing of R content. It is on-premises software you run behind your firewall. You keep control of your data and who has access. With RStudio Connect you can see all your content, decide who should be able to view and collaborate on it, tune performance, schedule updates, and view logs.
+[RStudio Connect](https://www.rstudio.com/products/connect/) is a server product from RStudio for secure sharing of R content. It is on-premises software you run behind your firewall. You keep control of your data and who has access. With RStudio Connect you can see all your content, decide who should be able to view and collaborate on it, tune performance, schedule updates, and view logs.
+
+## References 
+
+* [Communicating Results with R Markdown](https://rviews.rstudio.com/2018/11/01/r-markdown-a-better-approach/)
+* [Enterprise Dashboards with R Markdown](https://rviews.rstudio.com/2018/05/16/replacing-excel-reports-with-r-markdown-and-shiny/)
+* [Enterprise Dashboards with Shiny and Databases](https://rviews.rstudio.com/2017/09/20/dashboards-with-r-and-databases/)
 
