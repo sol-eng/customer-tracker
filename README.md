@@ -23,11 +23,11 @@ The following output formats for the customer tracker are hosted on [RStudio Con
 * [HTML Presentation](http://colorado.rstudio.com:3939/content/1645/tracker-ioslides.html) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1645/access/1229)</small>
 * [PowerPoint Presentation](http://colorado.rstudio.com:3939/content/1646/vMEHUS5Ks/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1646/access/1429)</small>
 
-#### Interactive docs and apps
+#### Shiny apps and docs
 
-* [Interactive Document](http://colorado.rstudio.com:3939/content/1121/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1121/access)</small>
-* [Flexdashboard](http://colorado.rstudio.com:3939/content/1642/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1642/access)</small>
 * [Shiny App](http://colorado.rstudio.com:3939/tracker-app/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1120)</small>
+* [Shiny Document](http://colorado.rstudio.com:3939/content/1121/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1121/access)</small>
+* [Flexdashboard](http://colorado.rstudio.com:3939/content/1642/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1642/access)</small>
 
 #### API's
 
