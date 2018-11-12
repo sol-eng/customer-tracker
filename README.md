@@ -16,7 +16,7 @@ The following output formats for the customer tracker are hosted on [RStudio Con
 
 * [HTML Report](http://colorado.rstudio.com/rsc/tracker-report/tracker-report.html) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1609/access)</small>
 * [PDF Report](http://colorado.rstudio.com:3939/content/1644/tracker-pdf.pdf) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1644/access) </small>
-* [Word Report](http://colorado.rstudio.com:3939/content/1643/vcoWkF5eS/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1643/access/1432) </small>
+* [Word Report](http://colorado.rstudio.com:3939/content/1643/) <small>[[login]](http://colorado.rstudio.com:3939/connect/#/apps/1643/access/1432) </small>
 
 #### Presentations
 
