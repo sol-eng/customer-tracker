@@ -177,7 +177,13 @@ saveWorkbook(wb, xlsfile, overwrite = TRUE)
 
 ```{r}
 p2 <- add_ggplot(p1, 6, 3)
-email <- compose_email("Here is the {reportLab} report: {p2} \n {t2} Nathan")
+
+email <- compose_email("
+Here is the {reportLab} report: {p2} \n {t2}
+
+[Click here for drill down reports](http://colorado.rstudio.com/rsc/connect/#/apps/1609/output/1814)
+
+Nathan")
 
 rmarkdown::output_metadata$set(
   rsc_email_subject = reportLab,

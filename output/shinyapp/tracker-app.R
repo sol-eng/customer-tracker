@@ -46,7 +46,7 @@ ui <- material_page(
     material_column(
       width = 2,
       material_card(
-        material_dropdown("seg", "Segment", c("Total", "Heavy", "Mainstream", "Focus1", "Focus2", "Specialty", "Diverse1", "Diverse2", "Other", "New"), color = "#78909c"),
+        material_dropdown('seg', 'Segment', c("Total", "Heavy", "Mainstream", "Focus1", "Focus2", "Specialty", "Diverse1", "Diverse2", "Other", "New"), color = "#78909c"),
         material_dropdown('grp', 'Group', c("Total", "Core", "Extra"), color = "#78909c"),
         material_radio_button("per", "Period", c("Week", "YTD"), color = "#78909c")
       )
