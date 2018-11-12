@@ -183,7 +183,7 @@ Click on the image to open the Shiny app in RStudio Connect. Or visit online at 
 :::
 
 ```{r download, include=FALSE}
-reportLab <- paste("Tracker", params$seg, params$grp, params$per, sep = "-")
+reportLab <- "Customer Tracker Presentation"
 pngfile <- paste0(reportLab, ".png")
 xlsfile <- paste0(reportLab, ".xlsx")
 wb <- createWorkbook()
@@ -197,17 +197,25 @@ saveWorkbook(wb, xlsfile, overwrite = TRUE)
 ```
 
 ```{r}
+lab <- paste(params$seg, params$grp, params$per, sep = "-")
 p2 <- add_ggplot(p1, 6, 3)
 
 email <- compose_email("
-Here is the {reportLab} report: {p2} \n {t2}
+{reportLab} for {lab} as of {add_readable_time()}.
 
-[Click here for drill down reports](http://colorado.rstudio.com/rsc/connect/#/apps/1646/access/1880)
+Hightlights include **{tail(t1, 1)$Revenue} change in revenue** as a result of:
 
-Nathan")
+* **{tail(t1, 1)$Visits} change in visits**
+* **{tail(t1, 1)$Items} change in items**
+* **{tail(t1, 1)$Spend} change in spend**
+
+{p2} \n {t2}
+
+For specific data relevant to other segments or groups, view the report on [RStudio Connect](http://colorado.rstudio.com/rsc/connect/#/apps/1646/access/1880).
+")
 
 rmarkdown::output_metadata$set(
-  rsc_email_subject = reportLab,
+  rsc_email_subject = paste(reportLab, "for", lab),
   rsc_email_body_html = email$html_str,
   rsc_email_images = email$images,
   rsc_email_attachments = xlsfile
