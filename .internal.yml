@@ -1,0 +1,18 @@
+default:
+  content:
+    - name: "Customer PowerPoint presentation"
+      path: "./output/powerpoint"
+      description: "Use parameterized R Markdown to create a PowerPoint presentation."
+      tag:
+        - "Demo Content|Customer"
+      url: "/customer/powerpoint/"
+    - name: "Customer Word document"
+      path: "./output/word"
+      description: "Use parameterized R Markdown to create a Word document."
+      tag: "Demo Content|Customer"
+      url: "/customer/word/"
+    - name: "Customer PDF document"
+      path: "output/pdf"
+      description: "Use parameterized R Markdown to create a PDF document."
+      tag: "Demo Content|Customer"
+      url: "/customer/pdf/"
